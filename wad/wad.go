@@ -42,7 +42,7 @@ type File struct {
 }
 
 type Wad struct {
-	Files []File
+	Files []*File
 }
 
 func Open(r io.ReaderAt) (*Wad, error) {
@@ -59,7 +59,7 @@ func Open(r io.ReaderAt) (*Wad, error) {
 	if !bytes.Equal(magic, hdr.Id[:]) {
 		return nil, ErrNotWad(fmt.Sprintf("wad: illegal magic %v", hdr.Id))
 	}
-	wad := &Wad{Files: make([]File, int(hdr.LumpCount))}
+	wad := &Wad{Files: make([]*File, int(hdr.LumpCount))}
 	var lump struct {
 		Position    int32
 		DiskSize    int32
@@ -76,7 +76,7 @@ func Open(r io.ReaderAt) (*Wad, error) {
 		}
 		tr := cleanName(lump.Name[:])
 		n := string(tr)
-		wad.Files[i] = File{
+		wad.Files[i] = &File{
 			SectionReader: io.NewSectionReader(r, int64(lump.Position), int64(lump.Size)),
 			Name:          n,
 			Type:          Type(lump.Type),

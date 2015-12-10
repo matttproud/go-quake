@@ -51,7 +51,7 @@ func extractPak(r io.ReaderAt) error {
 	return nil
 }
 
-func extract(pf pak.File) error {
+func extract(pf *pak.File) error {
 	destPath := filepath.Join(dest, pf.Name)
 	destDir := filepath.Dir(destPath)
 	if err := os.MkdirAll(destDir, 0744); err != nil {

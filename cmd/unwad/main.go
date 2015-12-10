@@ -51,8 +51,8 @@ func extractPak(r io.ReaderAt) error {
 	return nil
 }
 
-func extract(pf wad.File) error {
-	destPath := filepath.Join(dest, pf.Name)
+func extract(w *wad.File) error {
+	destPath := filepath.Join(dest, w.Name)
 	destDir := filepath.Dir(destPath)
 	if err := os.MkdirAll(destDir, 0744); err != nil {
 		return err
@@ -65,9 +65,9 @@ func extract(pf wad.File) error {
 		return err
 	}
 	defer f.Close()
-	_, err = io.Copy(f, pf)
+	_, err = io.Copy(f, w)
 	if err == nil {
-		log.Println("Extracted", pf.Name)
+		log.Println("Extracted", w.Name)
 	}
 	return err
 }

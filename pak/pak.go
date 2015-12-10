@@ -19,7 +19,7 @@ type File struct {
 }
 
 type Pak struct {
-	Files []File
+	Files []*File
 }
 
 func Open(r io.ReaderAt) (*Pak, error) {
@@ -41,7 +41,7 @@ func Open(r io.ReaderAt) (*Pak, error) {
 		Position, Length int32
 	}
 	numEntities := int(hdr.DirectoryLength / int32(unsafe.Sizeof(dirent)))
-	pak := &Pak{Files: make([]File, numEntities)}
+	pak := &Pak{Files: make([]*File, numEntities)}
 	dir := io.NewSectionReader(r, int64(hdr.DirectoryOffset), int64(hdr.DirectoryLength))
 	for i := 0; i < numEntities; i++ {
 		if err := binary.Read(dir, binary.LittleEndian, &dirent); err != nil {
@@ -49,7 +49,7 @@ func Open(r io.ReaderAt) (*Pak, error) {
 		}
 		tr := trimNull(dirent.Name[:])
 		n := string(tr)
-		pak.Files[i] = File{
+		pak.Files[i] = &File{
 			SectionReader: io.NewSectionReader(r, int64(dirent.Position), int64(dirent.Length)),
 			Name:          n,
 			Size:          int(dirent.Length),
