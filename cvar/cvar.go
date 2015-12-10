@@ -1,3 +1,4 @@
+// Package cvar provides console variable facilities.
 package cvar
 
 import "fmt"

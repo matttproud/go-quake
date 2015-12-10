@@ -1,3 +1,4 @@
+// Package pak accesses assets stored in PAK archives.
 package pak
 
 import (

@@ -1,3 +1,4 @@
+// Package wad accesses assets stored in WAD2 archives.
 package wad
 
 import (

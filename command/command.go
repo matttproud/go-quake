@@ -1,3 +1,4 @@
+// Package command provides console command bindings.
 package command
 
 import "fmt"

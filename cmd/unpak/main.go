@@ -1,3 +1,4 @@
+// unpak extracts files from pak archives.
 package main
 
 import (

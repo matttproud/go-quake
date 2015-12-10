@@ -1,3 +1,4 @@
+// unwad extracts files from wad archives.
 package main
 
 import (

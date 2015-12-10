@@ -1,3 +1,4 @@
+// Package path provides asset access mechanisms.
 package path
 
 import (
