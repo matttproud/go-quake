@@ -1,12 +1,18 @@
 package main
 
-import "github.com/matttproud/go-quake/cvar"
+import (
+	"time"
+
+	"github.com/matttproud/go-quake/cvar"
+)
+
+var sysTicRate *cvar.Float
 
 func init() {
 	cvars.NewFloat("host_framerate", 0)
 	cvars.NewFloat("host_speeds", 0)
 
-	cvars.NewFloat("sys_ticrate", 0.05)
+	sysTicRate, _ = cvars.NewFloat("sys_ticrate", 0.05)
 	cvars.NewFloat("serverprofile", 0)
 
 	cvars.NewFloat("fraglimit", 0, cvar.ServerSide)
@@ -25,4 +31,8 @@ func init() {
 	cvars.NewFloat("pausable", 1)
 
 	cvars.NewFloat("temp1", 0)
+}
+
+func hostFrame(t time.Time) error {
+	return nil
 }

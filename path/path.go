@@ -14,17 +14,22 @@ type dirPath struct {
 	handles map[string]*os.File
 }
 
-func (p *dirPath) Load(n string) (io.ReaderAt, error) {
+func fAsSectionReader(f *os.File) *io.SectionReader {
+	stat, _ := f.Stat()
+	return io.NewSectionReader(f, 0, stat.Size())
+}
+
+func (p *dirPath) Load(n string) (*io.SectionReader, error) {
 	fp := filepath.Join(p.base, n)
 	if f, ok := p.handles[fp]; ok {
-		return f, nil
+		return fAsSectionReader(f), nil
 	}
 	f, err := os.Open(fp)
 	if err != nil {
 		return nil, err
 	}
 	p.handles[fp] = f
-	return f, nil
+	return fAsSectionReader(f), nil
 }
 
 func (p *dirPath) Close() {
@@ -40,16 +45,20 @@ type pakPath struct {
 	handles map[string]*pak.File
 }
 
-func (p *pakPath) Load(n string) (io.ReaderAt, error) {
+func pAsSectionReader(f *pak.File) *io.SectionReader {
+	return io.NewSectionReader(f, 0, int64(f.Size))
+}
+
+func (p *pakPath) Load(n string) (*io.SectionReader, error) {
 	if f, ok := p.handles[n]; ok {
-		return f, nil
+		return pAsSectionReader(f), nil
 	}
 	for _, f := range p.p.Files {
 		if f.Name != n {
 			continue
 		}
 		p.handles[n] = f
-		return f, nil
+		return pAsSectionReader(f), nil
 	}
 	return nil, os.ErrNotExist
 }
@@ -63,7 +72,7 @@ type Path struct {
 }
 
 type source interface {
-	Load(string) (io.ReaderAt, error)
+	Load(string) (*io.SectionReader, error)
 	Close()
 }
 
@@ -92,7 +101,7 @@ func New(searchPaths ...string) (*Path, error) {
 	return p, nil
 }
 
-func (p *Path) Load(name string) (io.ReaderAt, error) {
+func (p *Path) Load(name string) (*io.SectionReader, error) {
 	for _, s := range p.sources {
 		r, err := s.Load(name)
 		switch {

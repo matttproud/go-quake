@@ -35,13 +35,13 @@ func (r Registry) NewString(name, def string, os ...Option) (*String, error) {
 }
 
 type Float struct {
-	val  float64
+	val  float32
 	opts options
 }
 
-func (f *Float) Get() float64 { return f.val }
+func (f *Float) Get() float32 { return f.val }
 
-func (r Registry) NewFloat(name string, def float64, os ...Option) (*Float, error) {
+func (r Registry) NewFloat(name string, def float32, os ...Option) (*Float, error) {
 	if _, ok := r[name]; ok {
 		return nil, ErrAlreadyRegistered(name)
 	}

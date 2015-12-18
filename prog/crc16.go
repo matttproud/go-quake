@@ -5,7 +5,7 @@ const (
 	xorVal         = 0x0000
 )
 
-var table = [256]CRC16{
+var table = [256]crc16{
 	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
 	0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
 	0x1231, 0x0210, 0x3273, 0x2252, 0x52b5, 0x4294, 0x72f7, 0x62d6,
@@ -41,15 +41,15 @@ var table = [256]CRC16{
 }
 
 // CRC16 implements a 16-bit, non-reflected CRC using polynomial 0x1021 and the CCITT XMODEM initial and final values.
-type CRC16 uint16
+type crc16 uint16
 
-func New() *CRC16 { v := CRC16(initVal); return &v }
+func newCRC16() *crc16 { v := crc16(initVal); return &v }
 
-func (c *CRC16) Write(b []byte) (int, error) {
+func (c *crc16) Write(b []byte) (int, error) {
 	for _, b := range b {
-		*c = (*c << 8) ^ table[(*c>>8)^CRC16(b)]
+		*c = (*c << 8) ^ table[(*c>>8)^crc16(b)]
 	}
 	return len(b), nil
 }
 
-func (c CRC16) Sum() uint16 { return uint16(c) ^ xorVal }
+func (c crc16) Sum() uint16 { return uint16(c) ^ xorVal }

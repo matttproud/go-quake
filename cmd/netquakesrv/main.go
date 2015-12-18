@@ -2,8 +2,17 @@
 package main
 
 import (
+	"flag"
+	"log"
+	"os"
+	"os/signal"
+	"time"
+
+	"golang.org/x/net/context"
+
 	"github.com/matttproud/go-quake/command"
 	"github.com/matttproud/go-quake/cvar"
+	"github.com/matttproud/go-quake/prog"
 )
 
 var (
@@ -11,6 +20,71 @@ var (
 	commands = command.New()
 )
 
-// sys_linux.c:354
 func main() {
+	flag.Parse()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go handleInterrupt(ctx, cancel)
+	log.Println("Starting inspection subsystems ...")
+	if err := Inspect(); err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println("[DONE] Starting inspection subsystems")
+	log.Println("Finding game assets ...")
+	assets, err := GamePath()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer assets.Close()
+	log.Println("[DONE] Finding game assets")
+	log.Println("Preparing the game virtual machine ...")
+	progs, err := assets.Load("progs.dat")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	_, err = prog.Open(progs)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println("[DONE] Preparing the game virtual machine")
+	log.Println("Running main loop ...")
+	if err := loop(ctx); err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println("[DONE] Running main loop")
+}
+
+func loop(ctx context.Context) error {
+	last := time.Now()
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			if err := hostFrame(last); err != nil {
+				return err
+			}
+			took := time.Since(last)
+			sleep := time.Duration(float32(time.Second) * sysTicRate.Get())
+			time.Sleep(sleep - took)
+			last = time.Now()
+		}
+	}
+	return nil
+}
+
+func handleInterrupt(ctx context.Context, cancel func()) {
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, os.Kill)
+	select {
+	case <-ctx.Done():
+	case sig := <-sigCh:
+		log.Printf("Received %v; terminating ...", sig)
+		cancel()
+	}
 }

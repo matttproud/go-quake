@@ -2,3 +2,4 @@
 package bsp
 
 const MaxMapLeafs = 8192
+const MipLevels = 4

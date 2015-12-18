@@ -2,6 +2,7 @@ package prog
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"unsafe"
 )
@@ -48,10 +49,13 @@ func Open(r io.Reader) (*Prog, error) {
 
 		EntityFields int32
 	}
-	crc := New()
+	crc := newCRC16()
 	r = io.TeeReader(r, crc)
 	if err := read(r, &hdr); err != nil {
 		return nil, err
+	}
+	if hdr.Version != 6 {
+		return nil, ErrNotProg(fmt.Sprintf("unknown version %v", hdr.Version))
 	}
 	hdrSz := int(unsafe.Sizeof(hdr))
 	is := []int{
