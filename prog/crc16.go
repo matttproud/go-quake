@@ -1,5 +1,4 @@
-// Package crc16 implements a 16-bit, non-reflected CRC using polynomial 0x1021 and the CCITT XMODEM initial and final values.
-package crc16
+package prog
 
 const (
 	initVal uint16 = 0xffff
@@ -41,6 +40,7 @@ var table = [256]CRC16{
 	0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0,
 }
 
+// CRC16 implements a 16-bit, non-reflected CRC using polynomial 0x1021 and the CCITT XMODEM initial and final values.
 type CRC16 uint16
 
 func New() *CRC16 { v := CRC16(initVal); return &v }
