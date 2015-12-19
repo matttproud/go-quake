@@ -13,7 +13,7 @@ func (e ErrAlreadyRegistered) Error() string {
 	return fmt.Sprintf("command: %v is already registered", e)
 }
 
-type Func func() error
+type Func func(args ...string) error
 
 func (r Registry) Add(name string, fn Func) error {
 	if _, ok := r[name]; ok {
@@ -21,4 +21,9 @@ func (r Registry) Add(name string, fn Func) error {
 	}
 	r[name] = fn
 	return nil
+}
+
+func (r Registry) Find(name string) (fn Func, ok bool) {
+	fn, ok = r[name]
+	return fn, ok
 }

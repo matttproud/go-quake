@@ -4,6 +4,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+
+	. "github.com/matttproud/go-quake/qtype"
 )
 
 type Op uint16
@@ -87,8 +89,6 @@ type Stmt struct {
 
 const MaxParams = 8
 
-type Int int32
-
 type Func struct {
 	// pr_comp.h dstatement_t
 
@@ -126,9 +126,7 @@ type Def struct {
 	SName  Int
 }
 
-type Float float32
-
-type Vec3 [3]Float
+type String int32
 
 type stmtInvalidError Stmt
 

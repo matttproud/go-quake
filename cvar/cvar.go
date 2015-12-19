@@ -22,7 +22,8 @@ type String struct {
 	opts options
 }
 
-func (s *String) Get() string { return s.val }
+func (s *String) Get() string  { return s.val }
+func (s *String) Set(v string) { s.val = v }
 
 func (r Registry) NewString(name, def string, os ...Option) (*String, error) {
 	if _, ok := r[name]; ok {
@@ -39,7 +40,8 @@ type Float struct {
 	opts options
 }
 
-func (f *Float) Get() float32 { return f.val }
+func (f *Float) Get() float32  { return f.val }
+func (f *Float) Set(v float32) { f.val = v }
 
 func (r Registry) NewFloat(name string, def float32, os ...Option) (*Float, error) {
 	if _, ok := r[name]; ok {

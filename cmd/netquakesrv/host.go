@@ -1,10 +1,6 @@
 package main
 
-import (
-	"time"
-
-	"github.com/matttproud/go-quake/cvar"
-)
+import "github.com/matttproud/go-quake/cvar"
 
 var sysTicRate *cvar.Float
 
@@ -31,8 +27,4 @@ func init() {
 	cvars.NewFloat("pausable", 1)
 
 	cvars.NewFloat("temp1", 0)
-}
-
-func hostFrame(t time.Time) error {
-	return nil
 }

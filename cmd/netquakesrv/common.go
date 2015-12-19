@@ -6,7 +6,7 @@ import (
 	"github.com/matttproud/go-quake/cvar"
 )
 
-func noImpl() error {
+func noImpl(...string) error {
 	return errors.New("not implemented")
 }
 
