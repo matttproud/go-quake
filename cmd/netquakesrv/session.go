@@ -215,7 +215,7 @@ func (s *Session) Move(data []byte) error {
 
 func (s *Session) StringCmd(data []byte) error {
 	i := 0
-	for data[i] != 0 || data[i] != 255 {
+	for data[i] != 0 && data[i] != 255 {
 		i++
 	}
 	log.Println("command:", string(data[:i]))
